@@ -1,0 +1,76 @@
+.calculator {
+  display: flex;
+  flex-direction: column;
+  border: 2px solid #ccc;
+  border-radius: 5px;
+  padding: 0.6rem;
+  width: fit-content;
+  background-color: #f5f5f5;
+}
+
+.display {
+  display: flex;
+  align-items: center;
+  justify-content: end;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 0.3rem;
+  margin: 0.6rem 0;
+  font-size: 1.25rem;
+  text-align: right;
+  min-height: 2rem;
+  color: red;
+}
+
+.buttons {
+  display: flex;
+}
+
+.right-panel {
+  display: flex;
+  flex-direction: column;
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+}
+
+.digit,
+.input-value,
+.action {
+  margin-right: 0.3rem;
+  margin-bottom: 0.3rem;
+  font-size: 1rem;
+  flex: 1;
+  text-align: center;
+}
+
+.digit {
+  border-radius: 50%;
+  width: 3rem;
+  height: 3rem;
+}
+
+.input-value,
+.digit {
+  background-color: #fe9900;
+  color: #8e6a3e;
+}
+
+.input-value {
+  border-radius: 0.6rem;
+  padding: 0.6rem;
+}
+
+.action {
+  background-color: #6d6d6d;
+  border-radius: 0.6rem;
+  padding: 0.6rem;
+  color: #f9f9f9;
+  padding: 0.6rem 1rem;
+}
+
+.button:active {
+  background-color: #ddd;
+}
