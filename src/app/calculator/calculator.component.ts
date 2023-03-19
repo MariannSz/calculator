@@ -22,12 +22,12 @@ export class CalculatorComponent {
     const previousLastInputValue =
       this.calculationInInputOrder[this.calculationInInputOrder.length - 2];
     if (
-      this.operators.includes(lastInputValue) &&
-      operator === '-' &&
-      this.operators.includes(previousLastInputValue)
+      this.operators.includes(lastInputValue) && // if the latest input is an operator
+      operator === '-' && // if the latest input is "-" operator
+      this.operators.includes(previousLastInputValue) // if the last but one input is an operator
     ) {
-      this.currentValue = '-';
-      this.calculationInInputOrder = this.calculationInInputOrder.slice(0, -1);
+      this.currentValue = '-'; // handle it as a minus prefix
+      this.calculationInInputOrder = this.calculationInInputOrder.slice(0, -1); // remove the extra operator from
     } else {
       this.currentValue = '';
     }
@@ -51,10 +51,10 @@ export class CalculatorComponent {
         this.calculationInInputOrder.length - 1
       );
     }
-    this.currentValue = '';
     this.display = this.calculate(this.calculationInInputOrder).toString();
     this.isPositive = parseFloat(this.display) >= 0;
-    this.calculationInInputOrder = [];
+    this.calculationInInputOrder = [this.currentValue];
+    this.currentValue = this.display;
   }
 
   calculate(arr: string[]): number {
@@ -136,6 +136,7 @@ export class CalculatorComponent {
 
   clear() {
     this.display = '0';
+    this.currentValue = '';
     this.isPositive = parseFloat(this.display) >= 0;
   }
 }
