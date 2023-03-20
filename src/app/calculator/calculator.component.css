@@ -21,18 +21,68 @@
   min-height: 2rem;
 }
 
-.buttons {
-  display: flex;
+.container {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
+  gap: 0px 0px;
+  grid-auto-flow: row;
+  grid-template-areas:
+    'non-zero-digits non-zero-digits non-zero-digits operation-buttons'
+    'non-zero-digits non-zero-digits non-zero-digits operation-buttons'
+    'non-zero-digits non-zero-digits non-zero-digits operation-buttons'
+    'wide-buttons wide-buttons wide-buttons operation-buttons'
+    'wide-buttons wide-buttons wide-buttons operation-buttons';
 }
 
-.right-panel {
-  display: flex;
-  flex-direction: column;
+.wide-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 0px 0px;
+  grid-auto-flow: row;
+  grid-template-areas:
+    '. .'
+    'equal-button equal-button';
+  grid-area: wide-buttons;
 }
 
-.row {
-  display: flex;
-  flex-direction: row;
+.equal-button {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr;
+  gap: 0px 0px;
+  grid-auto-flow: row;
+  grid-template-areas: '.';
+  grid-area: equal-button;
+}
+
+.non-zero-digits {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr;
+  gap: 0px 0px;
+  grid-auto-flow: row;
+  grid-template-areas:
+    '. . .'
+    '. . .'
+    '. . .';
+  grid-area: non-zero-digits;
+}
+
+.operation-buttons {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
+  gap: 0px 0px;
+  grid-auto-flow: row;
+  grid-template-areas:
+    '.'
+    '.'
+    '.'
+    '.'
+    '.';
+  grid-area: operation-buttons;
 }
 
 .digit,

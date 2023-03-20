@@ -1,34 +1,28 @@
 <div class="calculator">
-  <div class="display" [ngStyle]="{ color: isPositive ? 'green' : 'red' }">
+  <div class="display" [ngStyle]="{ color: getColor(result) }">
     {{ display || '' }}
   </div>
-  <div class="buttons">
-    <div class="left-panel">
-      <div class="row">
-        <button class="digit" (click)="inputDigit('7')">7</button>
-        <button class="digit" (click)="inputDigit('8')">8</button>
-        <button class="digit" (click)="inputDigit('9')">9</button>
-      </div>
-      <div class="row">
-        <button class="digit" (click)="inputDigit('4')">4</button>
-        <button class="digit" (click)="inputDigit('5')">5</button>
-        <button class="digit" (click)="inputDigit('6')">6</button>
-      </div>
-      <div class="row">
-        <button class="digit" (click)="inputDigit('1')">1</button>
-        <button class="digit" (click)="inputDigit('2')">2</button>
-        <button class="digit" (click)="inputDigit('3')">3</button>
-      </div>
-      <div class="row">
-        <button class="input-value" (click)="inputDigit('0')">0</button>
-        <button class="input-value" (click)="inputDecimal()">,</button>
-      </div>
-      <div class="row">
+  <div class="container">
+    <div class="wide-buttons">
+      <button class="input-value" (click)="inputDigit('0')">0</button>
+      <button class="input-value" (click)="inputDecimal()">,</button>
+      <div class="equal-button">
         <button class="action" (click)="equals()">=</button>
       </div>
     </div>
-    <div class="right-panel">
-      <button class="action" (click)="clear()">C</button>
+    <div class="non-zero-digits">
+      <button class="digit" (click)="inputDigit('7')">7</button>
+      <button class="digit" (click)="inputDigit('8')">8</button>
+      <button class="digit" (click)="inputDigit('9')">9</button>
+      <button class="digit" (click)="inputDigit('4')">4</button>
+      <button class="digit" (click)="inputDigit('5')">5</button>
+      <button class="digit" (click)="inputDigit('6')">6</button>
+      <button class="digit" (click)="inputDigit('1')">1</button>
+      <button class="digit" (click)="inputDigit('2')">2</button>
+      <button class="digit" (click)="inputDigit('3')">3</button>
+    </div>
+    <div class="operation-buttons">
+      <button class="action" id="clear" (click)="clear()">C</button>
       <button class="action" (click)="inputOperator('/')">/</button>
       <button class="action" (click)="inputOperator('*')">*</button>
       <button class="action" (click)="inputOperator('-')">-</button>

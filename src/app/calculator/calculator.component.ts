@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 
 @Component({
   selector: 'app-calculator',
@@ -6,29 +6,130 @@ import { Component } from '@angular/core';
   styleUrls: ['./calculator.component.css'],
 })
 export class CalculatorComponent {
-  operators: string[] = ['+', '-', '*', '/'];
+  specialKeys = [
+    '*',
+    '/',
+    '+',
+    '-',
+    'Backspace',
+    'c',
+    'C',
+    '=',
+    'Enter',
+    '.',
+    ',',
+  ];
   display: string = '0';
-  isPositive: boolean = true;
   currentValue: string = '';
-  calculationInInputOrder: string[] = [];
+  calculationSegmentsInInputOrder: string[] = [];
+  result: string = '';
+
+  @HostListener('window:keydown', ['$event'])
+  onKeyDown(event: KeyboardEvent) {
+    if (this.specialKeys.includes(event.key)) {
+      switch (event.key) {
+        case '*':
+          this.inputOperator('*');
+          break;
+        case '/':
+          this.inputOperator('/');
+          break;
+        case '+':
+          this.inputOperator('+');
+          break;
+        case '-':
+          this.inputOperator('-');
+          break;
+        case 'Backspace':
+          this.removeDigit();
+          break;
+        case 'c':
+          this.clear();
+          break;
+        case 'C':
+          this.clear();
+          break;
+        case '=':
+          this.equals();
+          break;
+        case 'Enter':
+          this.equals();
+          break;
+        case '.':
+          this.inputDecimal();
+          break;
+        case ',':
+          this.inputDecimal();
+          break;
+
+        default:
+          break;
+      }
+    } else if (this.isNumber(event.key)) {
+      this.inputDigit(event.key);
+    }
+  }
+
+  getColor(value: string) {
+    const intValue = parseInt(value);
+    if (intValue < 0) {
+      return '#bc1322';
+    } else if (intValue > 0) {
+      return '#5dbc6b';
+    } else {
+      return '#6d6d6d';
+    }
+  }
 
   inputOperator(operator: string) {
     if (this.currentValue !== '') {
-      this.calculationInInputOrder.push(this.currentValue);
+      this.calculationSegmentsInInputOrder.push(this.currentValue);
+      if (operator === '*' || operator === '/') {
+        // if the operator clicked was a higher order one
+        const previousLastOperator =
+          this.calculationSegmentsInInputOrder[
+            this.calculationSegmentsInInputOrder.length - 2
+          ];
+        if (previousLastOperator === '*' || previousLastOperator === '/') {
+          // calculate result so far and display it
+          this.display = this.calculate(
+            this.calculationSegmentsInInputOrder
+          ).toString();
+          this.result = this.display;
+        } else {
+          this.display = this.currentValue; // keep the display on current value
+        }
+      } else {
+        // if the operator clicked was a lower order one
+        this.display = this.calculate(
+          this.calculationSegmentsInInputOrder
+        ).toString(); // calculate and display the result so far
+        this.result = this.calculationSegmentsInInputOrder.some(
+          (calculationSegment) => this.isOperator(calculationSegment)
+        )
+          ? this.display // if there was at least one operation completed, set result to display value for the coloring to work
+          : '';
+      }
     }
-    this.calculationInInputOrder.push(operator);
-    const lastInputValue =
-      this.calculationInInputOrder[this.calculationInInputOrder.length - 1];
-    const previousLastInputValue =
-      this.calculationInInputOrder[this.calculationInInputOrder.length - 2];
+    const lastCalculationSegment =
+      this.calculationSegmentsInInputOrder[
+        this.calculationSegmentsInInputOrder.length - 1
+      ];
+
     if (
-      this.operators.includes(lastInputValue) && // if the latest input is an operator
-      operator === '-' && // if the latest input is "-" operator
-      this.operators.includes(previousLastInputValue) // if the last but one input is an operator
+      operator === '-' &&
+      (this.currentValue === '' || this.isOperator(lastCalculationSegment))
     ) {
-      this.currentValue = '-'; // handle it as a minus prefix
-      this.calculationInInputOrder = this.calculationInInputOrder.slice(0, -1); // remove the extra operator from
-    } else {
+      this.currentValue = operator;
+    } else if (this.calculationSegmentsInInputOrder.length > 0) {
+      const lastCalculationSegment =
+        this.calculationSegmentsInInputOrder[
+          this.calculationSegmentsInInputOrder.length - 1
+        ];
+      if (this.isOperator(lastCalculationSegment)) {
+        this.calculationSegmentsInInputOrder.pop();
+      }
+      this.calculationSegmentsInInputOrder.push(operator);
       this.currentValue = '';
     }
   }
@@ -36,67 +137,85 @@ export class CalculatorComponent {
     if (!this.currentValue.includes('.')) {
       this.currentValue = this.currentValue + '.';
       this.display = this.currentValue;
-      this.isPositive = parseFloat(this.display) >= 0;
     }
   }
   equals() {
     if (this.currentValue !== '') {
-      this.calculationInInputOrder.push(this.currentValue);
+      this.calculationSegmentsInInputOrder.push(this.currentValue);
     }
-    const lastInputValue =
-      this.calculationInInputOrder[this.calculationInInputOrder.length - 1];
-    if (this.operators.includes(lastInputValue)) {
-      this.calculationInInputOrder = this.calculationInInputOrder.slice(
-        0,
-        this.calculationInInputOrder.length - 1
-      );
+    const lastCalculationSegment =
+      this.calculationSegmentsInInputOrder[
+        this.calculationSegmentsInInputOrder.length - 1
+      ];
+    if (this.isOperator(this.currentValue)) {
+      this.calculationSegmentsInInputOrder =
+        this.calculationSegmentsInInputOrder.slice(0, -2);
+    } else if (this.isOperator(lastCalculationSegment)) {
+      this.calculationSegmentsInInputOrder =
+        this.calculationSegmentsInInputOrder.slice(0, -1);
     }
-    this.display = this.calculate(this.calculationInInputOrder).toString();
-    this.isPositive = parseFloat(this.display) >= 0;
-    this.calculationInInputOrder = [this.currentValue];
-    this.currentValue = this.display;
+
+    if (this.currentValue !== '') {
+      this.display = this.calculate(
+        this.calculationSegmentsInInputOrder
+      ).toString();
+      this.result = this.display;
+
+      this.calculationSegmentsInInputOrder = [this.currentValue];
+      this.currentValue = this.result;
+    }
   }
 
-  calculate(arr: string[]): number {
+  calculate(calculationSegmentsInInputOrder: string[]): number {
     const numbers: number[] = [];
     const operators: string[] = [];
 
-    for (let i = 0; i < arr.length; i++) {
-      const token = arr[i];
-      if (this.isNumber(token)) {
-        numbers.push(parseFloat(token));
-      } else if (this.isOperator(token)) {
+    calculationSegmentsInInputOrder.forEach((calculationSegment) => {
+      if (this.isNumber(calculationSegment)) {
+        numbers.push(parseFloat(calculationSegment));
+      } else {
         while (
           operators.length > 0 &&
-          this.hasHigherPrecedence(operators[operators.length - 1], token)
+          this.hasHigherPrecedence(
+            operators[operators.length - 1],
+            calculationSegment
+          )
         ) {
-          const b = numbers.pop()!;
-          const a = numbers.pop()!;
+          const number2 = numbers.pop()!;
+          const number1 = numbers.pop()!;
           const operator = operators.pop()!;
-          const result = this.performOperation(a, b, operator);
+          const result = this.performOperation(number1, number2, operator);
           numbers.push(result);
         }
-        operators.push(token);
+        operators.push(calculationSegment);
       }
-    }
+    });
 
     while (operators.length > 0) {
-      const b = numbers.pop()!;
-      const a = numbers.pop()!;
+      const number2 = numbers.pop()!;
+      const number1 = numbers.pop()!;
       const operator = operators.pop()!;
-      const result = this.performOperation(a, b, operator);
+      const result = this.performOperation(number1, number2, operator);
       numbers.push(result);
     }
 
     return numbers.pop()!;
   }
 
-  isNumber(token: string): boolean {
-    return !isNaN(parseFloat(token)) && isFinite(parseFloat(token));
+  isNumber(calculationSegment: string): boolean {
+    return (
+      !isNaN(parseFloat(calculationSegment)) &&
+      isFinite(parseFloat(calculationSegment))
+    );
   }
 
-  isOperator(token: string): boolean {
-    return token === '+' || token === '-' || token === '*' || token === '/';
+  isOperator(calculationSegment: string): boolean {
+    return (
+      calculationSegment === '+' ||
+      calculationSegment === '-' ||
+      calculationSegment === '*' ||
+      calculationSegment === '/'
+    );
   }
 
   hasHigherPrecedence(operator1: string, operator2: string): boolean {
@@ -109,34 +228,48 @@ export class CalculatorComponent {
     return precedence[operator1] >= precedence[operator2];
   }
 
-  performOperation(a: number, b: number, operator: string): number {
+  performOperation(number1: number, number2: number, operator: string): number {
     switch (operator) {
       case '+':
-        return a + b;
+        return number1 + number2;
       case '-':
-        return a - b;
+        return number1 - number2;
       case '*':
-        return a * b;
+        return number1 * number2;
       case '/':
-        return a / b;
+        return number1 / number2;
       default:
         throw new Error(`Invalid operator: ${operator}`);
     }
   }
 
   inputDigit(digit: string) {
-    if (this.currentValue === '0') {
+    if (
+      this.currentValue === '0' ||
+      (this.result !== '' && !this.isOperator(this.currentValue))
+    ) {
       this.currentValue = digit;
     } else {
       this.currentValue = this.currentValue + digit;
     }
+    this.result = '';
     this.display = this.currentValue;
-    this.isPositive = parseFloat(this.display) >= 0;
+  }
+
+  removeDigit() {
+    this.display =
+      this.display.slice(0, -1) === '' ? '0' : this.display.slice(0, -1);
+    this.currentValue = this.display.slice(0, -1);
+    this.calculationSegmentsInInputOrder.pop();
+    if (this.currentValue !== '') {
+      this.calculationSegmentsInInputOrder.push(this.currentValue);
+    }
   }
 
   clear() {
     this.display = '0';
     this.currentValue = '';
-    this.isPositive = parseFloat(this.display) >= 0;
+    this.result = '';
+    this.calculationSegmentsInInputOrder = [];
   }
 }
