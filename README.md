@@ -1,5 +1,7 @@
 # CalculatorTask
 
+<img width="242" alt="billede" src="https://user-images.githubusercontent.com/17903020/226248122-2fbfa80c-87a6-4d48-a9a4-51ae71f7237a.png">
+
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 15.2.4.
 
 ## Development server
@@ -25,5 +27,3 @@ Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To u
 ## Further help
 
 To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
-
-<img width="242" alt="billede" src="https://user-images.githubusercontent.com/17903020/226248122-2fbfa80c-87a6-4d48-a9a4-51ae71f7237a.png">
