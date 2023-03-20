@@ -134,9 +134,13 @@ export class CalculatorComponent {
     }
   }
   inputDecimal() {
-    if (!this.currentValue.includes('.')) {
+    if (!this.currentValue.includes('.') && this.result === '') {
       this.currentValue = this.currentValue + '.';
       this.display = this.currentValue;
+    } else if (this.result !== '') {
+      this.currentValue = '.';
+      this.display = this.currentValue;
+      this.result = '';
     }
   }
   equals() {
@@ -257,12 +261,10 @@ export class CalculatorComponent {
   }
 
   removeDigit() {
-    this.display =
-      this.display.slice(0, -1) === '' ? '0' : this.display.slice(0, -1);
-    this.currentValue = this.display.slice(0, -1);
-    this.calculationSegmentsInInputOrder.pop();
-    if (this.currentValue !== '') {
-      this.calculationSegmentsInInputOrder.push(this.currentValue);
+    if (this.result === '') {
+      this.display =
+        this.display.slice(0, -1) === '' ? '0' : this.display.slice(0, -1);
+      this.currentValue = this.display;
     }
   }
 
