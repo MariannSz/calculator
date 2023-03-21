@@ -122,10 +122,6 @@ export class CalculatorComponent {
     ) {
       this.currentValue = operator;
     } else if (this.calculationSegmentsInInputOrder.length > 0) {
-      const lastCalculationSegment =
-        this.calculationSegmentsInInputOrder[
-          this.calculationSegmentsInInputOrder.length - 1
-        ];
       if (this.isOperator(lastCalculationSegment)) {
         this.calculationSegmentsInInputOrder.pop();
       }
@@ -146,20 +142,6 @@ export class CalculatorComponent {
   equals() {
     if (this.currentValue !== '') {
       this.calculationSegmentsInInputOrder.push(this.currentValue);
-    }
-    const lastCalculationSegment =
-      this.calculationSegmentsInInputOrder[
-        this.calculationSegmentsInInputOrder.length - 1
-      ];
-    if (this.isOperator(this.currentValue)) {
-      this.calculationSegmentsInInputOrder =
-        this.calculationSegmentsInInputOrder.slice(0, -2);
-    } else if (this.isOperator(lastCalculationSegment)) {
-      this.calculationSegmentsInInputOrder =
-        this.calculationSegmentsInInputOrder.slice(0, -1);
-    }
-
-    if (this.currentValue !== '') {
       this.display = this.calculate(
         this.calculationSegmentsInInputOrder
       ).toString();
